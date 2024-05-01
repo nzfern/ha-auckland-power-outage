@@ -4,7 +4,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from datetime import datetime, timedelta
 from homeassistant.components.sensor import SensorEntity, PLATFORM_SCHEMA
-from .const import CONF_API_KEY, CONF_ICP_NUMBER
+from .const import CONF_ICP_NUMBER
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -12,32 +12,30 @@ _LOGGER = logging.getLogger(__name__)
 API_URL = "https://outagereporter.api.vector.co.nz/v2/planned-outages"
 SCAN_INTERVAL = timedelta(minutes=60)
 TIME_FORMAT = "%Y-%m-%d %H:%M"
+API_KEY = "o2AGN2LXeYbNvyE5cytNGX9INtcPLfj7"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_ICP_NUMBER): cv.string,
-        vol.Required(CONF_API_KEY): cv.string,
     }
 )
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the power outage sensor platform."""
     icp_number = config[CONF_ICP_NUMBER]
-    api_key = config[CONF_API_KEY]
 
     sensors = [
-        PowerOutageStartTimeSensor(icp_number, api_key, hass),
-        PowerOutageEndTimeSensor(icp_number, api_key, hass),
+        PowerOutageStartTimeSensor(icp_number, hass),
+        PowerOutageEndTimeSensor(icp_number, hass),
     ]
     async_add_entities(sensors)
 
 class PowerOutageSensor(SensorEntity):
-    def __init__(self, icp_number, api_key, hass, sensor_type):
+    def __init__(self, icp_number, hass, sensor_type):
         """Initialize the sensor."""
         super().__init__()
         self.hass = hass
         self._icp_number = icp_number
-        self._api_key = api_key
         self._outage = None
         self._name = f"Planned Power Outage {sensor_type}"
         self._icon = "mdi:power-plug-off-outline"
@@ -101,18 +99,7 @@ class PowerOutageSensor(SensorEntity):
         }
         headers = {
             "Accept": "application/json, text/plain, */*",
-            "Accept-Encoding": "gzip, deflate, br, zstd",
-            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-TW;q=0.5,ja;q=0.4,en-NZ;q=0.3",
-            "Apikey": self._api_key,
-            "Origin": "https://help.vector.co.nz",
-            "Referer": "https://help.vector.co.nz/",
-            "Sec-Ch-Ua": "\"Chromium\";v=\"124\", \"Microsoft Edge\";v=\"124\", \"Not-A Brand\";v=\"99\"",
-            "Sec-Ch-Ua-Mobile": "?0",
-            "Sec-Ch-Ua-Platform": "\"Windows\"",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-site",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0 Safari/537.36 Edg/124.0.0"
+            "Apikey": API_KEY,
         }
 
         try:
@@ -124,8 +111,8 @@ class PowerOutageSensor(SensorEntity):
             return None
 
 class PowerOutageStartTimeSensor(PowerOutageSensor):
-    def __init__(self, icp_number, api_key, hass):
-        super().__init__(icp_number, api_key, hass, "Start Time")
+    def __init__(self, icp_number, hass):
+        super().__init__(icp_number, hass, "Start Time")
 
     def _update_state(self):
         if self._outage is not None:
@@ -139,8 +126,8 @@ class PowerOutageStartTimeSensor(PowerOutageSensor):
                 self._state = None
 
 class PowerOutageEndTimeSensor(PowerOutageSensor):
-    def __init__(self, icp_number, api_key, hass):
-        super().__init__(icp_number, api_key, hass, "End Time")
+    def __init__(self, icp_number, hass):
+        super().__init__(icp_number, hass, "End Time")
 
     def _update_state(self):
         if self._outage is not None:
