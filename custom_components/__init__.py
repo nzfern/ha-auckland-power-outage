@@ -1,0 +1,1 @@
+"""Vector power outage notification"""

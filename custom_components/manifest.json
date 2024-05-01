@@ -1,0 +1,9 @@
+{
+  "domain": "power_outage_info",
+  "name": "Power Outage Information",
+  "documentation": "https://github.com/nzfern/ha-auckland-power-outage",
+  "dependencies": [],
+  "codeowners": ["@nzfern"],
+  "requirements": ["requests"],
+  "version": "0.1"
+}
