@@ -6,7 +6,9 @@ This custom component for Home Assistant provides two sensors that display infor
 
 1. Copy the `custom_components/power_outage_info` directory to your Home Assistant's `custom_components` directory.
 
-2. Restart Home Assistant for the changes to take effect.
+   or [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?repository=ha-auckland-power-outage&owner=nzfern&category=Integration)
+
+3. Restart Home Assistant for the changes to take effect.
 
 ## Configuration
 
