@@ -1,1 +1,0 @@
-CONF_ICP_NUMBER = "icp_number"
